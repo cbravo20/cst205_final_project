@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Final Project CST205</title>
+</head>
+<body>
+    <h1>Your Top 10 Songs</h1>
+    <a href="/">Back to Search</a> | <a href="/logout">Logout</a>
+
+    <ol>
+        {% for track in tracks %}
+            <li>
+                {% if track['album']['images'] %}
+                    <img src="{{ track['album']['images'][0]['url'] }}" width="100"><br>
+                {% endif %}
+                <strong>{{ track['name'] }}</strong><br>
+                Artist: {{ track['artists'] | map(attribute='name') | join(', ') }}<br>
+                Album: {{ track['album']['name'] }}<br>
+            </li>
+        {% endfor %}
+    </ol>
+</body>
+</html>

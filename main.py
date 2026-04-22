@@ -1,33 +1,27 @@
 import os
-import requests
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, session, url_for
 from dotenv import load_dotenv
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
 
-SPOTIFY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")
-SPOTIFY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET")
+sp_search = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
+    client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
+    client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET")
+))
 
 
-def get_spotify_token():
-    response = requests.post(
-        "https://accounts.spotify.com/api/token",
-        data={"grant_type": "client_credentials"},
-        auth=(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET),
+def get_oauth():
+    return SpotifyOAuth(
+        client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
+        client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
+        redirect_uri=os.environ.get("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:5000/callback"),
+        scope="user-top-read"
     )
-    return response.json().get("access_token")
-
-
-def search_spotify(query, search_type="track,album,artist", limit=10):
-    token = get_spotify_token()
-    response = requests.get(
-        "https://api.spotify.com/v1/search",
-        headers={"Authorization": f"Bearer {token}"},
-        params={"q": query, "type": search_type, "limit": limit},
-    )
-    return response.json()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -40,11 +34,41 @@ def index():
         query = request.form.get("query", "").strip()
         if query:
             try:
-                results = search_spotify(query)
+                results = sp_search.search(q=query, type="track,album,artist", limit=10)
             except Exception as e:
                 error = f"Error fetching results: {e}"
 
     return render_template("index.html", results=results, query=query, error=error)
+
+
+@app.route("/login")
+def login():
+    return redirect(get_oauth().get_authorize_url())
+
+
+@app.route("/callback")
+def callback():
+    code = request.args.get("code")
+    token_info = get_oauth().get_access_token(code)
+    session["token_info"] = token_info
+    return redirect(url_for("top_tracks"))
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
+
+
+@app.route("/top-tracks")
+def top_tracks():
+    token_info = session.get("token_info")
+    if not token_info:
+        return redirect(url_for("login"))
+
+    sp = spotipy.Spotify(auth=token_info["access_token"])
+    tracks = sp.current_user_top_tracks(limit=10, time_range="short_term")
+    return render_template("top_tracks.html", tracks=tracks["items"])
 
 
 if __name__ == "__main__":
