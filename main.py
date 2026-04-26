@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, session, url_for
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
+from spotipy.cache_handler import FlaskSessionCacheHandler
 
 load_dotenv()
 
@@ -20,7 +21,8 @@ def get_oauth():
         client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
         client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
         redirect_uri=os.environ.get("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:5000/callback"),
-        scope="user-top-read"
+        scope="user-top-read",
+        cache_handler=FlaskSessionCacheHandler(session)
     )
 
 
@@ -43,14 +45,13 @@ def index():
 
 @app.route("/login")
 def login():
-    return redirect(get_oauth().get_authorize_url())
+    return redirect(get_oauth().get_authorize_url() + "&show_dialog=true")
 
 
 @app.route("/callback")
 def callback():
     code = request.args.get("code")
-    token_info = get_oauth().get_access_token(code)
-    session["token_info"] = token_info
+    get_oauth().get_access_token(code)
     return redirect(url_for("top_tracks"))
 
 
