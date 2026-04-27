@@ -3,21 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Final Project CST205</title>
-    <style>
-        .album-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .album-card {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 10px;
-            width: 150px;
-            text-align: center;
-            background: #fafafa;
-        }
-    </style>
 </head>
 <body>
     <h1>Final Project CST205</h1>
@@ -26,43 +11,40 @@
         <input type="text" name="query" value="{{ query }}" placeholder="Search..." size="40" required>
         <button type="submit">Search</button>
     </form>
-    {% if albums is defined %}
-        {% if albums|length > 0 %}
-            <h2>Select 1 to 8 album covers for {{ artist_name }}</h2>
-            <form method="POST" action="/select-albums" id="albumForm">
-                <div class="album-grid">
-                    {% for album in albums %}
-                        <div class="album-card">
-                              {% if album['images'] %}
-                               <img src="{{ album['images'][0]['url'] }}" alt="{{ album['name'] }}" style="width:120px;">
-                               {% endif %}
-                                <p><strong>{{ album['name'] }}</strong></p>
-                                 <p>{{ album['release_date'] }}</p>
-                                 {% set img_url = album['images'][0]['url'] if album['images'] else '' %}
-                                  <label>
-                                    <input type="checkbox" name="selected_albums" value="{{ album['name'] }}|{{ img_url }}">
-                                    Select
-                                </label>    
-                             </div>
-                             {% endfor %}
-                            </div>
-                            <br>
-                            <button type="submit">Submit Selected Albums</button>
-                        </form>
-                         <script>
-                         const form = document.getElementById("albumForm");
-                         form.addEventListener("submit", function(event) {
-                             const checked = document.querySelectorAll('input[name="selected_albums"]:checked');
-                             if (checked.length < 1) {
-                                alert("Please select at least 1 album cover.");
-                                event.preventDefault();
-                            } else if (checked.length > 8) {
-                                alert("You can select up to 8 album covers only.");
-                                 event.preventDefault();
-                                }
-                            });
-                             </script>
-        {% else %}
-            <p>No albums found for this artist.</p>
+
+    {% if error %}
+        <p>Error: {{ error }}</p>
+    {% endif %}
+
+    {% if results %}
+        {% if results.tracks and results.tracks['items'] %}
+            <h2>Tracks</h2>
+            {% for track in results.tracks['items'] %}
+                <p>
+                    {% if track['album']['images'] %}
+                        <img src="{{ track['album']['images'][0]['url'] }}" width="150"><br>
+                    {% endif %}
+                    <strong>{{ track['name'] }}</strong><br>
+                    Artist: {{ track['artists'] | map(attribute='name') | join(', ') }}<br>
+                    Album: {{ track['album']['name'] }}<br>
+                    Release date: {{ track['album']['release_date'] }}<br>
+                </p>
+            {% endfor %}
+        {% endif %}
+
+        {% if results.albums and results.albums['items'] %}
+            <h2>Albums</h2>
+            {% for album in results.albums['items'] %}
+                <p>
+                    {% if album['images'] %}
+                        <img src="{{ album['images'][0]['url'] }}" width="150"><br>
+                    {% endif %}
+                    <strong>{{ album['name'] }}</strong><br>
+                    Artist: {{ album['artists'] | map(attribute='name') | join(', ') }}<br>
+                    Release date: {{ album['release_date'] }}<br>
+                </p>
+            {% endfor %}
         {% endif %}
     {% endif %}
+</body>
+</html>
