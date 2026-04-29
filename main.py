@@ -79,7 +79,8 @@ def logout():
 
 @app.route("/top-tracks")
 def top_tracks():
-    token_info = session.get("token_info")
+    oauth = get_oauth()
+    token_info = oauth.get_cached_token()
     if not token_info:
         return redirect(url_for("login"))
 
