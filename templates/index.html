@@ -3,66 +3,386 @@
 <head>
     <meta charset="UTF-8">
     <title>Final Project CST205</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <style>
-        .album-grid {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #ddb65a;
+            color: #14365b;
+            font-family: 'Bungee', sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .record-large {
+            position: fixed;
+            right: -180px;
+            bottom: -180px;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: #17385d;
+            z-index: 0;
+        }
+
+        .record-large::before {
+            content: "";
+            position: absolute;
+            inset: 80px;
+            border-radius: 50%;
+            border: 28px solid #e7e2cf;
+        }
+
+        .record-large::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: #c54033;
+            top: 240px;
+            left: 240px;
+            box-shadow:
+                0 0 0 26px #e18b38,
+                0 0 0 44px #ece6d5,
+                0 0 0 0 #000;
+        }
+
+        .record-center {
+            position: fixed;
+            right: 120px;
+            bottom: 120px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #ece6d5;
+            border: 12px solid #17385d;
+            z-index: 1;
+        }
+
+        .record-cut-1,
+        .record-cut-2,
+        .record-cut-3 {
+            position: fixed;
+            background: #ddb65a;
+            z-index: 1;
+            transform-origin: center;
+        }
+
+        .record-cut-1 {
+            width: 220px;
+            height: 40px;
+            right: 320px;
+            bottom: 305px;
+            transform: rotate(46deg);
+        }
+
+        .record-cut-2 {
+            width: 260px;
+            height: 34px;
+            right: 225px;
+            bottom: 140px;
+            transform: rotate(8deg);
+        }
+
+        .record-cut-3 {
+            width: 200px;
+            height: 34px;
+            right: 360px;
+            bottom: 170px;
+            transform: rotate(78deg);
+        }
+
+        .page {
+            position: relative;
+            z-index: 2;
+            padding: 40px 50px 60px;
+        }
+
+        .top-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-top: 10px;
+            margin-bottom: 50px;
+        }
+
+        .top-buttons a,
+        .top-buttons button {
+            text-decoration: none;
+            color: #17385d;
+            background: #ece6d5;
+            border: 4px solid #c54033;
+            padding: 18px 24px;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .divider {
+            height: 5px;
+            background: #c54033;
+            margin-bottom: 70px;
+        }
+
+        .hero-title {
+            font-size: 96px;
+            line-height: 0.95;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #17385d;
+            max-width: 900px;
+            margin-bottom: 30px;
+        }
+
+        .sub-text {
+            font-size: 26px;
+            margin-bottom: 30px;
+            color: #17385d;
+        }
+
+        .login-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            text-decoration: none;
+            color: #17385d;
+            background: #ece6d5;
+            border: 3px solid #c54033;
+            padding: 16px 22px;
+            font-weight: 700;
+        }
+
+        .search-form {
             display: flex;
             flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .search-form input[type="text"] {
+            width: 420px;
+            max-width: 100%;
+            padding: 18px 16px;
+            border: 3px solid #c54033;
+            background: #ece6d5;
+            font-size: 18px;
+            color: #17385d;
+            outline: none;
+        }
+
+        .search-form button,
+        .submit-btn {
+            background: #ece6d5;
+            color: #17385d;
+            border: 4px solid #c54033;
+            padding: 16px 24px;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .section-title {
+            font-size: 72px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #17385d;
+            margin: 50px 0 30px;
+        }
+
+        .helper-text {
+            font-size: 24px;
+            color: #17385d;
+            margin-bottom: 30px;
+        }
+
+        .album-grid {
+            display: grid;
+            grid-template-columns: 1fr; 
+            gap: 40px;
+        }
+
+        .album-card {
+            width: 100%;
+            background: #ece6d5;
+            border: 8px solid #17385d;
+            border-radius: 18px;
+            padding: 30px;
+
+            display: flex;
+            flex-direction: column;   
+            align-items: center;      
+            text-align: center;
             gap: 20px;
         }
-        .album-card {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 10px;
-            width: 150px;
-            text-align: center;
-            background: #fafafa;
+
+        .album-card img {
+            width: 100%;
+            max-width: 260px;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .album-name {
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #17385d;
+            margin-bottom: 2px;
+        }
+
+        .album-date {
+            font-size: 18px;
+            color: #17385d;
+            margin-bottom: 6px;
+        }
+
+        .album-card label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #17385d;
+        }
+
+        .album-card input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #c54033;
+        }
+
+        .empty-message {
+            font-size: 24px;
+            color: #17385d;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .hero-title {
+                font-size: 64px;
+            }
+
+            .section-title {
+                font-size: 50px;
+            }
+
+            .top-buttons {
+                flex-wrap: wrap;
+            }
+
+            .page {
+                padding: 30px 24px 50px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero-title {
+                font-size: 46px;
+            }
+
+            .section-title {
+                font-size: 38px;
+            }
+
+            .sub-text,
+            .helper-text {
+                font-size: 20px;
+            }
+
+            .search-form input[type="text"] {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Final Project CST205</h1>
-    <a href="/login">Login with Spotify to see your Top Tracks</a>
-    <form method="POST">
-        <input type="text" name="query" value="{{ query }}" placeholder="Search..." size="40" required>
-        <button type="submit">Search</button>
-    </form>
-    {% if albums is defined %}
-        {% if albums|length > 0 %}
-            <h2>Select 1 to 8 album covers for {{ artist_name }}</h2>
-            <form method="POST" action="/select-albums" id="albumForm">
-                <div class="album-grid">
-                    {% for album in albums %}
-                        <div class="album-card">
-                              {% if album['images'] %}
-                               <img src="{{ album['images'][0]['url'] }}" alt="{{ album['name'] }}" style="width:120px;">
-                               {% endif %}
-                                <p><strong>{{ album['name'] }}</strong></p>
-                                 <p>{{ album['release_date'] }}</p>
-                                 {% set img_url = album['images'][0]['url'] if album['images'] else '' %}
-                                  <label>
+    <div class="record-large"></div>
+    <div class="record-center"></div>
+    <div class="record-cut-1"></div>
+    <div class="record-cut-2"></div>
+    <div class="record-cut-3"></div>
+
+    <div class="page">
+        <div class="top-buttons">
+            <a href="/">Back to Search</a>
+            <a href="/logout">Logout</a>
+        </div>
+
+        <div class="divider"></div>
+
+        <h1 class="hero-title">Your Top 10<br>Tracks</h1>
+
+        <p class="sub-text">Search for an artist and choose up to 8 album covers.</p>
+
+        <a class="login-link" href="/login">Login with Spotify to see your Top Tracks</a>
+
+        <form method="POST" class="search-form">
+            <input
+                type="text"
+                name="query"
+                value="{{ query }}"
+                placeholder="Search artist..."
+                required
+            >
+            <button type="submit">Search</button>
+        </form>
+
+        {% if albums is defined %}
+            {% if albums|length > 0 %}
+                <h2 class="section-title">Tracks</h2>
+                <p class="helper-text">Select 1 to 8 album covers for {{ artist_name }}</p>
+
+                <form method="POST" action="/select-albums" id="albumForm">
+                    <div class="album-grid">
+                        {% for album in albums %}
+                            <div class="album-card">
+                                {% if album['images'] %}
+                                    <img src="{{ album['images'][0]['url'] }}" alt="{{ album['name'] }}">
+                                {% endif %}
+
+                                <div class="album-name">{{ album['name'] }}</div>
+                                <div class="album-date">{{ album['release_date'] }}</div>
+
+                                {% set img_url = album['images'][0]['url'] if album['images'] else '' %}
+                                <label>
                                     <input type="checkbox" name="selected_albums" value="{{ album['name'] }}|{{ img_url }}">
                                     Select
-                                </label>    
-                             </div>
-                             {% endfor %}
+                                </label>
                             </div>
-                            <br>
-                            <button type="submit">Submit Selected Albums</button>
-                        </form>
-                         <script>
-                         const form = document.getElementById("albumForm");
-                         form.addEventListener("submit", function(event) {
-                             const checked = document.querySelectorAll('input[name="selected_albums"]:checked');
-                             if (checked.length < 1) {
-                                alert("Please select at least 1 album cover.");
-                                event.preventDefault();
-                            } else if (checked.length > 8) {
-                                alert("You can select up to 8 album covers only.");
-                                 event.preventDefault();
-                                }
-                            });
-                             </script>
-        {% else %}
-            <p>No albums found for this artist.</p>
+                        {% endfor %}
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Selected Albums</button>
+                </form>
+
+                <script>
+                    const form = document.getElementById("albumForm");
+                    form.addEventListener("submit", function(event) {
+                        const checked = document.querySelectorAll('input[name="selected_albums"]:checked');
+                        if (checked.length < 1) {
+                            alert("Please select at least 1 album cover.");
+                            event.preventDefault();
+                        } else if (checked.length > 8) {
+                            alert("You can select up to 8 album covers only.");
+                            event.preventDefault();
+                        }
+                    });
+                </script>
+            {% else %}
+                <p class="empty-message">No albums found for this artist.</p>
+            {% endif %}
         {% endif %}
-    {% endif %}
+    </div>
+</body>
+</html>
