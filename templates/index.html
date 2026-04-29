@@ -140,8 +140,7 @@
             background: #c54033; 
             width: 100vw;
             margin-left: calc(50% - 50vw);
-            padding: 60px 0;
-            margin-top: 40px;
+            padding: 10px 0;
         } 
 
         .tracks-inner{
@@ -276,7 +275,8 @@
 </head>
 <body>
     <div class="page">
-        <img src="static/images/record.png" class="record" />
+        <img src="{{ url_for('static', filename='images/record.png') }}" class="record" alt="record">
+
         <div class="top-buttons">
             <a href="/">Back to Search</a>
             <a href="/logout">Logout</a>
@@ -303,36 +303,37 @@
 
         {% if albums is defined %}
             {% if albums|length > 0 %}
-            <div class="tracks">
-                <div class="tracks-inner">
-                <h2 class="section-title">Tracks</h2>
-                <p class="helper-text">Select 1 to 8 album covers for {{ artist_name }}</p>
+                <div class="tracks">
+                    <div class="tracks-inner">
+                        <h2 class="section-title">Tracks</h2>
+                        <p class="helper-text">Select 1 to 8 album covers for {{ artist_name }}</p>
 
-                <form method="POST" action="/select-albums" id="albumForm">
-                    <div class="album-grid">
-                        {% for album in albums %}
-                            <div class="album-card">
-                                {% if album['images'] %}
-                                    <img src="{{ album['images'][0]['url'] }}" alt="{{ album['name'] }}">
-                                {% endif %}
+                        <form method="POST" action="/select-albums" id="albumForm">
+                            <div class="album-grid">
+                                {% for album in albums %}
+                                    <div class="album-card">
+                                        {% if album['images'] %}
+                                            <img src="{{ album['images'][0]['url'] }}" alt="{{ album['name'] }}">
+                                        {% endif %}
 
-                                <div class="album-name">{{ album['name'] }}</div>
-                                <div class="album-date">{{ album['release_date'] }}</div>
+                                        <div class="album-name">{{ album['name'] }}</div>
+                                        <div class="album-date">{{ album['release_date'] }}</div>
 
-                                {% set img_url = album['images'][0]['url'] if album['images'] else '' %}
-                                <label>
-                                    <input type="checkbox" name="selected_albums" value="{{ album['name'] }}|{{ img_url }}">
-                                    Select
-                                </label>
+                                        {% set img_url = album['images'][0]['url'] if album['images'] else '' %}
+                                        <label>
+                                            <input type="checkbox" name="selected_albums" value="{{ album['name'] }}|{{ img_url }}">
+                                            Select
+                                        </label>
+                                    </div>
+                                {% endfor %}
                             </div>
-                        {% endfor %}
-                    </div>
-                    <div class="submit-container"></div>
-                        <button type="submit" class="submit-btn">Submit Selected Albums</button>
+
+                            <div class="submit-container">
+                                <button type="submit" class="submit-btn">Submit Selected Albums</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                </form>
-            </div>
 
                 <script>
                     const form = document.getElementById("albumForm");
