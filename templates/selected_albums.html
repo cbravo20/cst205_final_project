@@ -1,10 +1,44 @@
-{% for album in album_data %}
-    <div>
-        <h3>{{ album.name }}</h3>
-        {% if album.img_path %}
-            <img src="{{ url_for('static', filename=album.img_path.replace('static/', '')) }}" width="200">
-        {% else %}
-            <p>Image not available.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Selected Albums</title>
+</head>
+<body>
+    <h1>Your Selected Albums</h1>
+    <a href="/">← Back to Search</a>
+    <br><br>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <p style="color:red;">{{ msg }}</p>
+            {% endfor %}
         {% endif %}
+    {% endwith %}
+
+    <div>
+        {% for album in album_data %}
+            {% set album_index = loop.index0 %}
+            <div>
+                <h3>{{ album.name }}</h3>
+                {% if album.img_path %}
+                    <img src="{{ url_for('static', filename=album.img_path) }}" width="200">
+                    <div>
+                        {% for effect in ['grayscale', 'sepia', 'negative'] %}
+                            <form method="POST" action="/apply-effect">
+                                <input type="hidden" name="img_path" value="{{ album.img_path }}">
+                                <input type="hidden" name="effect" value="{{ effect }}">
+                                <input type="hidden" name="album_index" value="{{ album_index }}">
+                                <button type="submit">{{ effect }}</button>
+                            </form>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>Image not available.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
     </div>
-{% endfor %}
+</body>
+</html>

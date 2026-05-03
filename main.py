@@ -7,6 +7,7 @@ import requests
 from PIL import Image
 import io
 from spotipy.cache_handler import FlaskSessionCacheHandler
+from effects import EFFECTS
 
 load_dotenv()
 
@@ -106,7 +107,7 @@ def select_albums():
 
         try:
             img_bytes = requests.get(img_url).content
-            img = Image.open(io.BytesIO(img_bytes))
+            img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
 
             filename = name.replace(" ", "_") + ".jpg"
             relative_path = f"album_covers/{filename}"
@@ -125,7 +126,38 @@ def select_albums():
                 "img_path": None
             })
 
+    session["album_data"] = album_data
+    return redirect(url_for("show_selected_albums"))
+
+
+@app.route("/selected-albums")
+def show_selected_albums():
+    album_data = session.get("album_data", [])
     return render_template("selected_albums.html", album_data=album_data)
+
+
+@app.route("/apply-effect", methods=["POST"])
+def apply_effect():
+    # grab what the user clicked from the form
+    img_path = request.form.get("img_path")
+    effect = request.form.get("effect")
+    album_index = request.form.get("album_index", type=int)
+
+    # build the full path so Pillow can find the file
+    full_path = os.path.join("static", img_path)
+
+    try:
+        # run the effect function and get back the new file path
+        new_full_path = EFFECTS[effect](full_path)
+        new_relative = os.path.relpath(new_full_path, "static")
+        # update just this album's image
+        album_data = session.get("album_data", [])
+        album_data[album_index]["img_path"] = new_relative
+        session["album_data"] = album_data
+    except Exception as e:
+        flash(f"Error applying effect: {e}")
+
+    return redirect(url_for("show_selected_albums"))
 
 
 if __name__ == "__main__":
