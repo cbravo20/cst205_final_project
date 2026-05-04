@@ -13,6 +13,8 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
 
+openai_api_key = os.environ.get("OPENAI_API_KEY")
+
 sp_search = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
     client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
     client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET")
@@ -96,13 +98,13 @@ def top_tracks():
 
 @app.route("/select-albums", methods=["POST"])
 def select_albums():
-    # This shows the albums that are already in the cart.
+    # Check cart, then go to selected albums page.
     cart = session.get("album_cart", {})
 
     if len(cart) < 1 or len(cart) > 10:
         return redirect(url_for("index"))
 
-    return render_template("selected_albums.html", album_data=list(cart.values()))
+    return redirect(url_for("selected_albums"))
 
 
 @app.route("/add-to-cart", methods=["POST"])
@@ -159,6 +161,7 @@ def add_to_cart():
     return redirect(url_for("index", query=query))
 
 
+
 @app.route("/remove-from-cart", methods=["POST"])
 def remove_from_cart():
     # This route was added so albums can be removed from the cart.
@@ -177,6 +180,9 @@ def remove_from_cart():
     query = request.form.get("query", "").strip()
     return redirect(url_for("index", query=query))
 
+@app.route("/selected-albums")
+def selected_albums():
+    return render_template("selected_albums.html", album_data=list(session.get("album_cart", {}).values()))
 
 if __name__ == "__main__":
     app.run(debug=True)
