@@ -19,7 +19,6 @@
 
     <div>
         {% for album in album_data %}
-            {% set album_index = loop.index0 %}
             <div>
                 <h3>{{ album.name }}</h3>
                 {% if album.img_path %}
@@ -29,7 +28,7 @@
                             <form method="POST" action="/apply-effect">
                                 <input type="hidden" name="img_path" value="{{ album.img_path }}">
                                 <input type="hidden" name="effect" value="{{ effect }}">
-                                <input type="hidden" name="album_index" value="{{ album_index }}">
+                                <input type="hidden" name="album_id" value="{{ album.id }}">
                                 <button type="submit">{{ effect }}</button>
                             </form>
                         {% endfor %}

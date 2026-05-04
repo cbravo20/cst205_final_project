@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session, url_for, flash
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
@@ -140,7 +140,7 @@ def add_to_cart():
                 # Save the album cover image into static/album_covers.
                 img_bytes = requests.get(img_url).content
                 # Turn the downloaded image bytes into an image Pillow can open.
-                img = Image.open(io.BytesIO(img_bytes))
+                img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
 
                 filename = name.replace(" ", "_").replace("/", "_").replace("\\", "_") + "_" + album_id + ".jpg"
                 relative_path = "album_covers/" + filename
@@ -185,6 +185,27 @@ def remove_from_cart():
 @app.route("/selected-albums")
 def selected_albums():
     return render_template("selected_albums.html", album_data=list(session.get("album_cart", {}).values()))
+
+@app.route("/apply-effect", methods=["POST"])
+def apply_effect():
+    img_path = request.form.get("img_path")
+    effect = request.form.get("effect")
+    album_id = request.form.get("album_id")
+
+    full_path = os.path.join("static", img_path)
+
+    try:
+        new_full_path = EFFECTS[effect](full_path)
+        new_relative = os.path.relpath(new_full_path, "static")
+        album_cart = session.get("album_cart", {})
+        if album_id in album_cart:
+            album_cart[album_id]["img_path"] = new_relative
+            session["album_cart"] = album_cart
+    except Exception as e:
+        flash(f"Error applying effect: {e}")
+
+    return redirect(url_for("selected_albums"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
