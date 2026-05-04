@@ -3,53 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Final Project CST205</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/top_tracks.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
 </head>
 <body>
+    <h1>Your Top 10 Songs</h1>
+    <a href="/">Back to Search</a> | <a href="/logout">Logout</a>
 
-    <div class="main">
-
-        <div>
-            <ul class="navbar">
-                <li><a href="/">Back to Search</a></li>
-                <li><a href="/logout">Logout</a></li>
-            </ul>
-        </div>
-
-        <div class="header_border">
-            <div class="header">
-                <img src="static/images/record.png" class="record" />
-                <h1>YOUR TOP 10</h1>
-                <h1>TRACKS</h1>
-            </div>
-        </div>
-    </div>
-        
-        
-        <!-- <a href="/">Back to Search</a> | <a href="/logout">Logout</a> -->
-
-        <div class="top">
-            <ol>
-            {% for track in tracks %}
-                <li class="album">
-                    {% if track['album']['images'] %}
-                    <img src="{{ track['album']['images'][0]['url'] }}">
-                    {% endif %}
-
-                    <strong class="title">{{ track['name'] }}</strong>
-                    <span class="text">Artist: {{ track['artists'] | map(attribute='name') | join(', ') }}</span>
-                    <span class="text">Album: {{ track['album']['name'] }}</span>
-                </li>
-            {% endfor %}
-            </ol>
-        </div>
-
-   
+    <ol>
+        {% for track in tracks %}
+            <li>
+                {% if track['album']['images'] %}
+                    <img src="{{ track['album']['images'][0]['url'] }}" width="100"><br>
+                {% endif %}
+                <strong>{{ track['name'] }}</strong><br>
+                Artist: {{ track['artists'] | map(attribute='name') | join(', ') }}<br>
+                Album: {{ track['album']['name'] }}<br>
+            </li>
+        {% endfor %}
+    </ol>
 </body>
 </html>
