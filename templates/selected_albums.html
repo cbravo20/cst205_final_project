@@ -1,10 +1,12 @@
+<div class="album-container">
 {% for album in album_data %}
-    <div>
+    <div class="album-card">
         <h3>{{ album.name }}</h3>
         {% if album.img_path %}
-            <img src="{{ url_for('static', filename=album.img_path.replace('static/', '')) }}" width="200">
+            <img src="{{ url_for('static', filename=album.img_path.replace('static/', '')) }}">
         {% else %}
             <p>Image not available.</p>
         {% endif %}
     </div>
 {% endfor %}
+</div>

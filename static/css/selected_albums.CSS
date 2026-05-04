@@ -1,0 +1,45 @@
+body {
+  background-color: #f7f1db;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.album-container {
+  background-color: #fcbf49;
+  padding: 40px;
+}
+
+.album-card {
+  font-family: "Bungee", sans-serif;
+  color: #003049;
+  background-color: #f7f1db;
+  text-align: center;
+
+  padding: 40px;
+  margin: 40px auto;
+  max-width: 500px;
+
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 10px;
+  border-color: #003049;
+}
+
+.album-card h3 {
+  font-size: 2rem;
+  margin: 20px 0;
+}
+
+.album-card img {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.album-card p {
+  font-family: "DM Sans", sans-serif;
+  font-size: 20px;
+  color: #d52a28;
+}
