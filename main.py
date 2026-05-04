@@ -36,6 +36,7 @@ def index():
     albums = []
     artist_name = ""
 
+    # This keeps the saved cart on the page.
     album_cart = session.get("album_cart", {})
     cart_items = list(album_cart.values())
     cart_ids = set(album_cart.keys())
@@ -95,6 +96,7 @@ def top_tracks():
 
 @app.route("/select-albums", methods=["POST"])
 def select_albums():
+    # This shows the albums that are already in the cart.
     cart = session.get("album_cart", {})
 
     if len(cart) < 1 or len(cart) > 10:
@@ -106,6 +108,7 @@ def select_albums():
 
 @app.route("/add-to-cart", methods=["POST"])
 def add_to_cart():
+    # This route was added so checked albums can be saved in the cart.
     selected = request.form.getlist("selected_albums")
 
     if not selected:
@@ -133,6 +136,7 @@ def add_to_cart():
 
         if img_url:
             try:
+                # Save the album cover image into static/album_covers.
                 img_bytes = requests.get(img_url).content
                 img = Image.open(io.BytesIO(img_bytes))
 
@@ -159,12 +163,14 @@ def add_to_cart():
 
 @app.route("/remove-from-cart", methods=["POST"])
 def remove_from_cart():
+    # This route was added so albums can be removed from the cart.
     remove_ids = request.form.getlist("remove_album_ids")
     cart = session.get("album_cart", {})
 
     for album_id in remove_ids:
         item = cart.pop(album_id, None)
         if item and item.get("img_path"):
+            # Delete the saved image file when the item is removed.
             full_path = os.path.join("static", item["img_path"])
             if os.path.exists(full_path):
                 os.remove(full_path)
