@@ -127,7 +127,10 @@ def select_albums():
     return render_template("selected_albums.html", album_data=album_data)
 
 
+@app.route('/final-poster')
+def final():
+   return render_template('final_poster.html')
+
 if __name__ == "__main__":
     app.run(debug=True)
 
-#test

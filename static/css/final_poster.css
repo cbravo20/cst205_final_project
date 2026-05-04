@@ -1,0 +1,135 @@
+.bungee-regular {
+  font-family: "Bungee", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.dm-sans-font {
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f7f1db;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.main {
+  min-height: 100vh;
+  padding: clamp(16px, 4vw, 40px);
+  background-color: #fcbf49;
+}
+
+.header_border {
+  width: min(90%, 1100px);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+h1 {
+  color: #003049;
+  font-family: "Bungee", sans-serif;
+  font-size: clamp(2.5rem, 10vw, 6rem);
+  line-height: 1.1;
+  margin: 40px 0;
+}
+
+.navbar {
+  list-style-type: none;
+  margin: 0;
+  padding: 20px 20px 40px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-bottom: 5px solid #d52a28;
+}
+
+.navbar li a {
+  font-family: "Bungee", sans-serif;
+  background-color: #f7f1db;
+  color: #003049;
+  display: block;
+  text-align: center;
+  padding: 14px 16px;
+  border-style: solid;
+  border-width: 2px 5px 5px 2px;
+  border-color: #d52a28;
+  text-decoration: none;
+}
+
+.navbar li a:hover {
+  background-color: #d52a28;
+  color: #f7f1db;
+  border-color: #fcbf49;
+}
+
+.poster,
+.download {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: clamp(16px, 5vw, 40px);
+  padding: clamp(24px, 8vw, 80px);
+}
+
+.poster {
+  background-color: #f7f1db;
+}
+
+.download {
+  background-color: #d52a28;
+}
+
+.poster_img {
+  width: min(90%, 420px);
+  height: auto;
+  border: 2px solid #d52a28;
+}
+
+.download_btn {
+  text-decoration: none;
+  color: #f7f1db;
+  font-family: "Bungee", sans-serif;
+  background-color: #003049;
+  padding: clamp(14px, 4vw, 25px);
+  border: 2px solid #f7f1db;
+  border-radius: 60px;
+  text-align: center;
+  font-size: clamp(0.9rem, 4vw, 1.2rem);
+}
+
+.download_btn:hover {
+  background-color: #f7f1db;
+  color: #003049;
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navbar li a {
+    width: 100%;
+  }
+
+  .poster,
+  .download {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .poster_img {
+    width: 100%;
+  }
+}

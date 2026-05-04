@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Project CST205</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/final_poster.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="main">
+
+    <div>
+        <ul class="navbar">
+            <li><a href="/">Back to Search</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="header_border">
+        <h1>Your Final Poster</h1>
+    </div>
+
+
+    <div class="container m-4 poster">
+        
+        <img src="{{ url_for('static', filename='final_poster/poster_test.jpg') }}" class="poster_img" />
+   
+    </div>
+
+    <div class="container m-4 download">
+        <div class="blue_div">
+        <a href="static/final_poster/poster_test.jpg" download="Final_Poster.jpg" class="download_btn">
+        Download Final Poster
+        </a>
+        </div>
+    </div>
+
+    
+</div>
+
+   
+</body>
+</html>
