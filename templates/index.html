@@ -22,47 +22,58 @@
 <body>
     <h1>Final Project CST205</h1>
     <a href="/login">Login with Spotify to see your Top Tracks</a>
+
     <form method="POST">
         <input type="text" name="query" value="{{ query }}" placeholder="Search..." size="40" required>
         <button type="submit">Search</button>
     </form>
+
+    <details>
+        <summary>Cart ({{ cart_items|length }})</summary>
+        {% if cart_items|length == 0 %}
+            <p>Empty cart.</p>
+        {% else %}
+            <form method="POST" action="/remove-from-cart">
+                <input type="hidden" name="query" value="{{ query }}">
+                {% for item in cart_items %}
+                    <p>
+                        <input type="checkbox" name="remove_album_ids" value="{{ item.id }}">
+                        {{ item.name }}
+                    </p>
+                {% endfor %}
+                <button type="submit">Remove Selected</button>
+            </form>
+        {% endif %}
+    </details>
+
     {% if albums is defined %}
         {% if albums|length > 0 %}
             <h2>Select 1 to 8 album covers for {{ artist_name }}</h2>
-            <form method="POST" action="/select-albums" id="albumForm">
+            <form method="POST" action="/add-to-cart" id="albumForm">
+                <input type="hidden" name="query" value="{{ query }}">
                 <div class="album-grid">
                     {% for album in albums %}
                         <div class="album-card">
-                              {% if album['images'] %}
-                               <img src="{{ album['images'][0]['url'] }}" alt="{{ album['name'] }}" style="width:120px;">
-                               {% endif %}
-                                <p><strong>{{ album['name'] }}</strong></p>
-                                 <p>{{ album['release_date'] }}</p>
-                                 {% set img_url = album['images'][0]['url'] if album['images'] else '' %}
-                                  <label>
-                                    <input type="checkbox" name="selected_albums" value="{{ album['name'] }}|{{ img_url }}">
-                                    Select
-                                </label>    
-                             </div>
-                             {% endfor %}
-                            </div>
-                            <br>
-                            <button type="submit">Submit Selected Albums</button>
-                        </form>
-                         <script>
-                         const form = document.getElementById("albumForm");
-                         form.addEventListener("submit", function(event) {
-                             const checked = document.querySelectorAll('input[name="selected_albums"]:checked');
-                             if (checked.length < 1) {
-                                alert("Please select at least 1 album cover.");
-                                event.preventDefault();
-                            } else if (checked.length > 8) {
-                                alert("You can select up to 8 album covers only.");
-                                 event.preventDefault();
-                                }
-                            });
-                             </script>
+                            {% if album['images'] %}
+                                <img src="{{ album['images'][0]['url'] }}" alt="{{ album['name'] }}" style="width:120px;">
+                            {% endif %}
+                            <p>{{ album['name'] }}</p>
+                            <p>{{ album['release_date'] }}</p>
+                            {% set img_url = album['images'][0]['url'] if album['images'] else '' %}
+                            <label>
+                                <input type="checkbox" name="selected_albums" value="{{ album['id'] }}|{{ album['name'] }}|{{ img_url }}" {% if album['id'] in cart_ids %}checked{% endif %}>
+                                Select
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <br>
+                <button type="submit">Add To Cart</button>
+            </form>
+            <form method="POST" action="/select-albums">
+                <button type="submit">Submit Selected Albums</button>
+            </form>
         {% else %}
-            <p>No albums found for this artist.</p>
+            <p>Search for albums to add to your cart.</p>
         {% endif %}
     {% endif %}
