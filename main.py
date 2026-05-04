@@ -31,31 +31,36 @@ def get_oauth():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    results = None
-    query = ""
+    query = request.args.get("query", "").strip()
     error = None
     albums = []
     artist_name = ""
 
+    album_cart = session.get("album_cart", {})
+    cart_items = list(album_cart.values())
+    cart_ids = set(album_cart.keys())
+
     if request.method == "POST":
         query = request.form.get("query", "").strip()
-        if query:
-            try:
-                results = sp_search.search(q=query, type="album", limit=10)
-                if results and 'albums' in results and 'items' in results['albums']:
-                    albums = results['albums']['items']
-                    if albums:
-                        # Use the first album's artist as the artist_name for the UI
-                        artist_name = albums[0]['artists'][0]['name'] if albums[0]['artists'] else ""
-            except Exception as e:
-                error = f"Error fetching results: {e}"
+
+    if query:
+        try:
+            results = sp_search.search(q=query, type="album", limit=10)
+            if results and 'albums' in results and 'items' in results['albums']:
+                albums = results['albums']['items']
+                if albums:
+                    artist_name = albums[0]['artists'][0]['name'] if albums[0]['artists'] else ""
+        except Exception as e:
+            error = f"Error fetching results: {e}"
 
     return render_template(
         "index.html",
         albums=albums,
         query=query,
         error=error,
-        artist_name=artist_name
+        artist_name=artist_name,
+        cart_items=cart_items,
+        cart_ids=cart_ids
     )
 
 
@@ -90,44 +95,87 @@ def top_tracks():
 
 @app.route("/select-albums", methods=["POST"])
 def select_albums():
-    selected = request.form.getlist("selected_albums")
+    cart = session.get("album_cart", {})
 
-    if len(selected) < 1 or len(selected) > 8:
+    if len(cart) < 1 or len(cart) > 10:
         flash("Select 1 to 8 album covers.")
         return redirect(url_for("index"))
 
-    album_data = []
+    return render_template("selected_albums.html", album_data=list(cart.values()))
+
+
+@app.route("/add-to-cart", methods=["POST"])
+def add_to_cart():
+    selected = request.form.getlist("selected_albums")
+
+    if not selected:
+        flash("Select at least 1 album cover.")
+        return redirect(url_for("index"))
+
+    cart = session.get("album_cart", {})
     save_dir = os.path.join("static", "album_covers")
     os.makedirs(save_dir, exist_ok=True)
 
     for item in selected:
-        name, img_url = item.split("|")
-
         try:
-            img_bytes = requests.get(img_url).content
-            img = Image.open(io.BytesIO(img_bytes))
+            album_id, name, img_url = item.split("|", 2)
+        except ValueError:
+            continue
 
-            filename = name.replace(" ", "_") + ".jpg"
-            relative_path = f"album_covers/{filename}"
-            full_path = os.path.join("static", relative_path)
+        if album_id in cart:
+            continue
 
-            img.save(full_path)
+        if len(cart) >= 10:
+            flash("You can save up to 10 album covers total.")
+            break
 
-            album_data.append({
-                "name": name,
-                "img_path": relative_path
-            })
+        img_path = None
 
-        except:
-            album_data.append({
-                "name": name,
-                "img_path": None
-            })
+        if img_url:
+            try:
+                img_bytes = requests.get(img_url).content
+                img = Image.open(io.BytesIO(img_bytes))
 
-    return render_template("selected_albums.html", album_data=album_data)
+                filename = name.replace(" ", "_").replace("/", "_").replace("\\", "_") + "_" + album_id + ".jpg"
+                relative_path = "album_covers/" + filename
+                full_path = os.path.join("static", relative_path)
+
+                img.save(full_path)
+                img_path = relative_path
+            except:
+                img_path = None
+
+        cart[album_id] = {
+            "id": album_id,
+            "name": name,
+            "img_path": img_path
+        }
+
+    session["album_cart"] = cart
+    flash("Album added to cart.")
+    query = request.form.get("query", "").strip()
+    return redirect(url_for("index", query=query))
+
+
+@app.route("/remove-from-cart", methods=["POST"])
+def remove_from_cart():
+    remove_ids = request.form.getlist("remove_album_ids")
+    cart = session.get("album_cart", {})
+
+    for album_id in remove_ids:
+        item = cart.pop(album_id, None)
+        if item and item.get("img_path"):
+            full_path = os.path.join("static", item["img_path"])
+            if os.path.exists(full_path):
+                os.remove(full_path)
+
+    session["album_cart"] = cart
+    flash("Removed selected album(s) from cart.")
+    query = request.form.get("query", "").strip()
+    return redirect(url_for("index", query=query))
 
 
 if __name__ == "__main__":
     app.run(debug=True)
 
-#test
+#
