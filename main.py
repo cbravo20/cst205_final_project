@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, session, url_for, flash
+from flask import Flask, render_template, request, redirect, session, url_for
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
@@ -100,7 +100,6 @@ def select_albums():
     cart = session.get("album_cart", {})
 
     if len(cart) < 1 or len(cart) > 10:
-        flash("Select 1 to 8 album covers.")
         return redirect(url_for("index"))
 
     return render_template("selected_albums.html", album_data=list(cart.values()))
@@ -112,7 +111,6 @@ def add_to_cart():
     selected = request.form.getlist("selected_albums")
 
     if not selected:
-        flash("Select at least 1 album cover.")
         return redirect(url_for("index"))
 
     cart = session.get("album_cart", {})
@@ -129,7 +127,6 @@ def add_to_cart():
             continue
 
         if len(cart) >= 10:
-            flash("You can save up to 10 album covers total.")
             break
 
         img_path = None
@@ -138,6 +135,7 @@ def add_to_cart():
             try:
                 # Save the album cover image into static/album_covers.
                 img_bytes = requests.get(img_url).content
+                # Turn the downloaded image bytes into an image Pillow can open.
                 img = Image.open(io.BytesIO(img_bytes))
 
                 filename = name.replace(" ", "_").replace("/", "_").replace("\\", "_") + "_" + album_id + ".jpg"
@@ -146,7 +144,8 @@ def add_to_cart():
 
                 img.save(full_path)
                 img_path = relative_path
-            except:
+            except Exception as e:
+                print(f"Error saving image: {e}")
                 img_path = None
 
         cart[album_id] = {
@@ -156,7 +155,6 @@ def add_to_cart():
         }
 
     session["album_cart"] = cart
-    flash("Album added to cart.")
     query = request.form.get("query", "").strip()
     return redirect(url_for("index", query=query))
 
@@ -176,12 +174,9 @@ def remove_from_cart():
                 os.remove(full_path)
 
     session["album_cart"] = cart
-    flash("Removed selected album(s) from cart.")
     query = request.form.get("query", "").strip()
     return redirect(url_for("index", query=query))
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-#
