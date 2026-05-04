@@ -1,12 +1,36 @@
-<div class="album-container">
-{% for album in album_data %}
-    <div class="album-card">
-        <h3>{{ album.name }}</h3>
-        {% if album.img_path %}
-            <img src="{{ url_for('static', filename=album.img_path.replace('static/', '')) }}">
-        {% else %}
-            <p>Image not available.</p>
-        {% endif %}
-    </div>
-{% endfor %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Selected Albums</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/top_tracks.css') }}">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="top">
+    <h1 style="text-align:center;">YOUR SELECTED ALBUMS</h1>
+
+    <ol>
+        {% for album in album_data %}
+            <li class="album">
+
+                {% if album.img_path %}
+                    <img src="{{ url_for('static', filename=album.img_path.replace('static/', '')) }}">
+                {% else %}
+                    <span class="text">Image not available.</span>
+                {% endif %}
+
+                <strong class="title">{{ album.name }}</strong>
+
+            </li>
+        {% endfor %}
+    </ol>
 </div>
+
+</body>
+</html>
