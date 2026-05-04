@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, session, url_for, flash
+from flask import Flask, render_template, request, redirect, session, url_for
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
@@ -13,6 +13,8 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
+
+openai_api_key = os.environ.get("OPENAI_API_KEY")
 
 sp_search = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
     client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
@@ -32,31 +34,37 @@ def get_oauth():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    results = None
-    query = ""
+    query = request.args.get("query", "").strip()
     error = None
     albums = []
     artist_name = ""
 
+    # This keeps the saved cart on the page.
+    album_cart = session.get("album_cart", {})
+    cart_items = list(album_cart.values())
+    cart_ids = set(album_cart.keys())
+
     if request.method == "POST":
         query = request.form.get("query", "").strip()
-        if query:
-            try:
-                results = sp_search.search(q=query, type="album", limit=10)
-                if results and 'albums' in results and 'items' in results['albums']:
-                    albums = results['albums']['items']
-                    if albums:
-                        # Use the first album's artist as the artist_name for the UI
-                        artist_name = albums[0]['artists'][0]['name'] if albums[0]['artists'] else ""
-            except Exception as e:
-                error = f"Error fetching results: {e}"
+
+    if query:
+        try:
+            results = sp_search.search(q=query, type="album", limit=10)
+            if results and 'albums' in results and 'items' in results['albums']:
+                albums = results['albums']['items']
+                if albums:
+                    artist_name = albums[0]['artists'][0]['name'] if albums[0]['artists'] else ""
+        except Exception as e:
+            error = f"Error fetching results: {e}"
 
     return render_template(
         "index.html",
         albums=albums,
         query=query,
         error=error,
-        artist_name=artist_name
+        artist_name=artist_name,
+        cart_items=cart_items,
+        cart_ids=cart_ids
     )
 
 
@@ -92,75 +100,91 @@ def top_tracks():
 
 @app.route("/select-albums", methods=["POST"])
 def select_albums():
-    selected = request.form.getlist("selected_albums")
+    # Check cart, then go to selected albums page.
+    cart = session.get("album_cart", {})
 
-    if len(selected) < 1 or len(selected) > 8:
-        flash("Select 1 to 8 album covers.")
+    if len(cart) < 1 or len(cart) > 10:
         return redirect(url_for("index"))
 
-    album_data = []
+    return redirect(url_for("selected_albums"))
+
+
+@app.route("/add-to-cart", methods=["POST"])
+def add_to_cart():
+    # This route was added so checked albums can be saved in the cart.
+    selected = request.form.getlist("selected_albums")
+
+    if not selected:
+        return redirect(url_for("index"))
+
+    cart = session.get("album_cart", {})
     save_dir = os.path.join("static", "album_covers")
     os.makedirs(save_dir, exist_ok=True)
 
     for item in selected:
-        name, img_url = item.split("|")
-
         try:
-            img_bytes = requests.get(img_url).content
-            img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+            album_id, name, img_url = item.split("|", 2)
+        except ValueError:
+            continue
 
-            filename = name.replace(" ", "_") + ".jpg"
-            relative_path = f"album_covers/{filename}"
-            full_path = os.path.join("static", relative_path)
+        if album_id in cart:
+            continue
 
-            img.save(full_path)
+        if len(cart) >= 10:
+            break
 
-            album_data.append({
-                "name": name,
-                "img_path": relative_path
-            })
+        img_path = None
 
-        except:
-            album_data.append({
-                "name": name,
-                "img_path": None
-            })
+        if img_url:
+            try:
+                # Save the album cover image into static/album_covers.
+                img_bytes = requests.get(img_url).content
+                # Turn the downloaded image bytes into an image Pillow can open.
+                img = Image.open(io.BytesIO(img_bytes))
 
-    session["album_data"] = album_data
-    return redirect(url_for("show_selected_albums"))
+                filename = name.replace(" ", "_").replace("/", "_").replace("\\", "_") + "_" + album_id + ".jpg"
+                relative_path = "album_covers/" + filename
+                full_path = os.path.join("static", relative_path)
 
+                img.save(full_path)
+                img_path = relative_path
+            except Exception as e:
+                print(f"Error saving image: {e}")
+                img_path = None
+
+        cart[album_id] = {
+            "id": album_id,
+            "name": name,
+            "img_path": img_path
+        }
+
+    session["album_cart"] = cart
+    query = request.form.get("query", "").strip()
+    return redirect(url_for("index", query=query))
+
+
+
+@app.route("/remove-from-cart", methods=["POST"])
+def remove_from_cart():
+    # This route was added so albums can be removed from the cart.
+    remove_ids = request.form.getlist("remove_album_ids")
+    cart = session.get("album_cart", {})
+
+    for album_id in remove_ids:
+        item = cart.pop(album_id, None)
+        if item and item.get("img_path"):
+            # Delete the saved image file when the item is removed.
+            full_path = os.path.join("static", item["img_path"])
+            if os.path.exists(full_path):
+                os.remove(full_path)
+
+    session["album_cart"] = cart
+    query = request.form.get("query", "").strip()
+    return redirect(url_for("index", query=query))
 
 @app.route("/selected-albums")
-def show_selected_albums():
-    album_data = session.get("album_data", [])
-    return render_template("selected_albums.html", album_data=album_data)
-
-
-@app.route("/apply-effect", methods=["POST"])
-def apply_effect():
-    # grab what the user clicked from the form
-    img_path = request.form.get("img_path")
-    effect = request.form.get("effect")
-    album_index = request.form.get("album_index", type=int)
-
-    # build the full path so Pillow can find the file
-    full_path = os.path.join("static", img_path)
-
-    try:
-        # run the effect function and get back the new file path
-        new_full_path = EFFECTS[effect](full_path)
-        new_relative = os.path.relpath(new_full_path, "static")
-        # update just this album's image
-        album_data = session.get("album_data", [])
-        album_data[album_index]["img_path"] = new_relative
-        session["album_data"] = album_data
-    except Exception as e:
-        flash(f"Error applying effect: {e}")
-
-    return redirect(url_for("show_selected_albums"))
-
+def selected_albums():
+    return render_template("selected_albums.html", album_data=list(session.get("album_cart", {}).values()))
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-#test
