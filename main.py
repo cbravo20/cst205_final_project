@@ -164,6 +164,11 @@ def add_to_cart():
 
 
 
+@app.route('/final-poster')
+def final():
+   return render_template('final_poster.html')
+
+
 @app.route("/remove-from-cart", methods=["POST"])
 def remove_from_cart():
     # This route was added so albums can be removed from the cart.
