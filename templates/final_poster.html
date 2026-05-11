@@ -29,17 +29,21 @@
 
 
     <div class="container m-4 poster">
-        
-        <img src="{{ url_for('static', filename='final_poster/poster_test.jpg') }}" class="poster_img" />
-   
+        {% if collage_path %}
+            <img src="{{ url_for('static', filename=collage_path) }}" class="poster_img" />
+        {% else %}
+            <p>No poster generated yet. <a href="/selected-albums">Go select albums.</a></p>
+        {% endif %}
     </div>
 
     <div class="container m-4 download">
+        {% if collage_path %}
         <div class="blue_div">
-        <a href="static/final_poster/poster_test.jpg" download="Final_Poster.jpg" class="download_btn">
+        <a href="{{ url_for('static', filename=collage_path) }}" download="Final_Poster.jpg" class="download_btn">
         Download Final Poster
         </a>
         </div>
+        {% endif %}
     </div>
 
     
