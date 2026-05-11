@@ -394,7 +394,7 @@
 
                                         {% set img_url = album['images'][0]['url'] if album['images'] else '' %}
                                         <label>
-                                            <input type="checkbox" name="selected_albums" value="{{ album['name'] }}|{{ img_url }}">
+                                            <input type="checkbox" name="selected_albums" value="{{ album['id'] }}|{{ album['name']|replace('|','_') }}|{{ img_url }}">
                                             Select
                                         </label>
                                     </div>
