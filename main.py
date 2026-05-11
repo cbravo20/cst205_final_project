@@ -7,7 +7,7 @@ import requests
 from PIL import Image
 import io
 from spotipy.cache_handler import FlaskSessionCacheHandler
-from effects import EFFECTS
+from effects import EFFECTS, make_album_collage, original_img_path
 
 load_dotenv()
 
@@ -95,7 +95,13 @@ def top_tracks():
 
     sp = spotipy.Spotify(auth=token_info["access_token"])
     tracks = sp.current_user_top_tracks(limit=10, time_range="short_term")
-    return render_template("top_tracks.html", tracks=tracks["items"])
+
+    album_cart = session.get("album_cart", {})
+    cart_items = list(album_cart.values())
+    cart_ids = set(album_cart.keys())
+
+    return render_template("top_tracks.html", tracks=tracks["items"],
+                           cart_items=cart_items, cart_ids=cart_ids)
 
 
 @app.route("/select-albums", methods=["POST"])
@@ -159,14 +165,47 @@ def add_to_cart():
         }
 
     session["album_cart"] = cart
+    redirect_to = request.form.get("redirect_to", "index")
+    if redirect_to == "top_tracks":
+        return redirect(url_for("top_tracks"))
     query = request.form.get("query", "").strip()
     return redirect(url_for("index", query=query))
 
 
-
 @app.route('/final-poster')
 def final():
-   return render_template('final_poster.html')
+    collage_path = session.get("collage_path")
+    return render_template('final_poster.html', collage_path=collage_path)
+
+
+@app.route('/generate-collage')
+def generate_collage():
+    # grab all image paths from the cart, skipping any that didn't save properly
+    cart = session.get("album_cart", {})
+    image_paths = [
+        os.path.join("static", item["img_path"])
+        for item in cart.values()
+        if item.get("img_path")
+    ]
+
+    if not image_paths:
+        flash("No images to generate a collage.")
+        return redirect(url_for("selected_albums"))
+
+    # make sure the output folder exists before saving
+    save_dir = os.path.join("static", "final_poster")
+    os.makedirs(save_dir, exist_ok=True)
+    output_path = os.path.join(save_dir, "collage.jpg")
+
+    # build the collage and store the path in session so final-poster can show it
+    if len(image_paths) == 6:
+        make_album_collage(image_paths, output_path, cols=2)
+    elif len(image_paths) == 9:
+        make_album_collage(image_paths, output_path, cols=3)
+    else:
+        make_album_collage(image_paths, output_path)
+    session["collage_path"] = "final_poster/collage.jpg"
+    return redirect(url_for("final"))
 
 
 @app.route("/remove-from-cart", methods=["POST"])
@@ -184,6 +223,9 @@ def remove_from_cart():
                 os.remove(full_path)
 
     session["album_cart"] = cart
+    redirect_to = request.form.get("redirect_to", "index")
+    if redirect_to == "top_tracks":
+        return redirect(url_for("top_tracks"))
     query = request.form.get("query", "").strip()
     return redirect(url_for("index", query=query))
 
@@ -197,9 +239,12 @@ def apply_effect():
     effect = request.form.get("effect")
     album_id = request.form.get("album_id")
 
+    # always apply to the original so effects dont combine
+    img_path = original_img_path(img_path)
     full_path = os.path.join("static", img_path)
 
     try:
+        # run the effect and save the result path back into the cart
         new_full_path = EFFECTS[effect](full_path)
         new_relative = os.path.relpath(new_full_path, "static")
         album_cart = session.get("album_cart", {})
