@@ -6,7 +6,7 @@ class Ticketmaster:
     def __init__(self, api_key):
         self.api_key = api_key
         self.base_url = "https://app.ticketmaster.com/discovery/v2"
-    
+    # Send a request to Ticketmaster to search events using a keyword 
     def search_events(self, keyword, size=10):
         params = {
             "keyword": keyword,
