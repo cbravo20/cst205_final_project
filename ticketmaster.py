@@ -22,9 +22,10 @@ class Ticketmaster:
     def get_concerts(self, artist):
         concerts = []
         try:
+             # Search Ticketmaster using the artist name from Spotify
             data = self.search_events(artist, size=10)
             events = data.get("_embedded", {}).get("events", [])
-            
+            # Loop through events and extract only needed fields 
             for event in events[:10]:
                 concert = {
                     "artist": artist,
@@ -45,7 +46,9 @@ tm = Ticketmaster(api_key=os.environ.get("TICKETMASTER_API_KEY"))
 
 
 def fetch_concerts_for_artists(artists):
+    # Fetch concerts for a list of artists and return a combined list of concerts
     concerts = []
     for artist in artists:
+         # Get concerts for each artist and add to main list
         concerts.extend(tm.get_concerts(artist))
     return concerts
