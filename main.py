@@ -158,7 +158,7 @@ def add_to_cart():
             except Exception as e:
                 print(f"Error saving image: {e}")
                 img_path = None
-
+        
         try:
             sp_album = sp_search.album(album_id)
             if sp_album.get("artists"):
@@ -220,7 +220,7 @@ def generate_collage():
         artist_name = item.get("artist")
         if artist_name and artist_name not in artists:
             artists.append(artist_name)
-            
+
     #Feeds spotify api artist into ticketmaster to get concert data
     session["concerts"] = fetch_concerts_for_artists(artists)
     session["collage_path"] = "final_poster/collage.jpg"
