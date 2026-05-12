@@ -46,6 +46,35 @@
         {% endif %}
     </div>
 
+<div class="container m-4 concerts-section">
+    <h2 class="concert-title">Upcoming Concerts</h2>
+
+    {% if concerts %}
+    <div class="concert-grid">
+        {% for concert in concerts %}
+        <div class="concert-card">
+            <h3 class="concert-name">
+                {{ concert.name }}
+            </h3>
+
+            <p class="concert-text"><strong>Artist:</strong> {{ concert.artist }}</p>
+            <p class="concert-text"><strong>Date:</strong> {{ concert.date }}</p>
+            <p class="concert-text"><strong>Venue:</strong> {{ concert.venue }}</p>
+            <p class="concert-text"><strong>City:</strong> {{ concert.city }}</p>
+
+            <a href="{{ concert.url }}" target="_blank" class="concert-btn">
+                Get Tickets
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="concert-empty">
+        No upcoming concerts found for the artists in your cart.
+    </p>
+    {% endif %}
+</div>
+
     
 </div>
 

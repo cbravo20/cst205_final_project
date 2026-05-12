@@ -112,7 +112,64 @@ h1 {
   background-color: #f7f1db;
   color: #003049;
 }
+.concerts-section {
+  margin-top: 40px;
+}
 
+.concert-title {
+  font-family: "Bungee", sans-serif;
+  color: #003049;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.concert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.concert-card {
+  background: #f7f1db;
+  border: 3px solid #003049;
+  padding: 14px;
+}
+
+.concert-name {
+  font-family: "Bungee", sans-serif;
+  color: #003049;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.concert-text {
+  margin: 4px 0;
+  color: #003049;
+  font-family: "DM Sans", sans-serif;
+}
+
+.concert-btn {
+  display: inline-block;
+  margin-top: 10px;
+  background: #d52a28;
+  color: #f7f1db;
+  padding: 8px 12px;
+  text-decoration: none;
+  border: 2px solid #003049;
+  font-family: "Bungee", sans-serif;
+  font-size: 0.85rem;
+}
+
+.concert-btn:hover {
+  background: #003049;
+  color: #f7f1db;
+}
+
+.concert-empty {
+  text-align: center;
+  color: #003049;
+  margin-top: 12px;
+}
 @media (max-width: 600px) {
   .navbar {
     flex-direction: column;
