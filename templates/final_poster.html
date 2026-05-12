@@ -46,29 +46,34 @@
         {% endif %}
     </div>
 
-    <div class="container m-4" style="margin-top: 40px;">
-        <h2 style="font-family: 'Bungee', sans-serif; color: #003049; margin-bottom: 20px;">Upcoming Concerts</h2>
-        {% if concerts %}
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
-            {% for concert in concerts %}
-            <div style="background: #f7f1db; border: 3px solid #003049; padding: 14px; border-radius: 0;">
-                <h3 style="font-family: 'Bungee', sans-serif; color: #003049; margin: 0 0 10px 0; font-size: 1rem;">
-                    {{ concert.name }}
-                </h3>
-                <p style="margin: 4px 0; color: #003049;"><strong>Artist:</strong> {{ concert.artist }}</p>
-                <p style="margin: 4px 0; color: #003049;"><strong>Date:</strong> {{ concert.date }}</p>
-                <p style="margin: 4px 0; color: #003049;"><strong>Venue:</strong> {{ concert.venue }}</p>
-                <p style="margin: 4px 0; color: #003049;"><strong>City:</strong> {{ concert.city }}</p>
-                <a href="{{ concert.url }}" target="_blank" style="display: inline-block; margin-top: 10px; background: #d52a28; color: #f7f1db; padding: 8px 12px; text-decoration: none; border: 2px solid #003049; border-radius: 0; font-family: 'Bungee', sans-serif; font-size: 0.85rem;">
-                    Get Tickets
-                </a>
-            </div>
-            {% endfor %}
+<div class="container m-4 concerts-section">
+    <h2 class="concert-title">Upcoming Concerts</h2>
+
+    {% if concerts %}
+    <div class="concert-grid">
+        {% for concert in concerts %}
+        <div class="concert-card">
+            <h3 class="concert-name">
+                {{ concert.name }}
+            </h3>
+
+            <p class="concert-text"><strong>Artist:</strong> {{ concert.artist }}</p>
+            <p class="concert-text"><strong>Date:</strong> {{ concert.date }}</p>
+            <p class="concert-text"><strong>Venue:</strong> {{ concert.venue }}</p>
+            <p class="concert-text"><strong>City:</strong> {{ concert.city }}</p>
+
+            <a href="{{ concert.url }}" target="_blank" class="concert-btn">
+                Get Tickets
+            </a>
         </div>
-        {% else %}
-        <p style="text-align: center; color: #003049; margin-top: 12px;">No upcoming concerts found for the artists in your cart.</p>
-        {% endif %}
+        {% endfor %}
     </div>
+    {% else %}
+    <p class="concert-empty">
+        No upcoming concerts found for the artists in your cart.
+    </p>
+    {% endif %}
+</div>
 
     
 </div>
