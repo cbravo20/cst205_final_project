@@ -8,13 +8,12 @@ from PIL import Image
 import io
 from spotipy.cache_handler import FlaskSessionCacheHandler
 from effects import EFFECTS, make_album_collage, original_img_path
+from ticketmaster import fetch_concerts_for_artists
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
-
-openai_api_key = os.environ.get("OPENAI_API_KEY")
 
 sp_search = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
     client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
@@ -30,6 +29,7 @@ def get_oauth():
         scope="user-top-read",
         cache_handler=FlaskSessionCacheHandler(session)
     )
+
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -140,6 +140,7 @@ def add_to_cart():
             break
 
         img_path = None
+        artist_name = ""
 
         if img_url:
             try:
@@ -158,10 +159,18 @@ def add_to_cart():
                 print(f"Error saving image: {e}")
                 img_path = None
 
+        try:
+            sp_album = sp_search.album(album_id)
+            if sp_album.get("artists"):
+                artist_name = sp_album["artists"][0]["name"]
+        except Exception as e:
+            print(f"Error fetching album details: {e}")
+
         cart[album_id] = {
             "id": album_id,
             "name": name,
-            "img_path": img_path
+            "img_path": img_path,
+            "artist": artist_name
         }
 
     session["album_cart"] = cart
@@ -175,7 +184,8 @@ def add_to_cart():
 @app.route('/final-poster')
 def final():
     collage_path = session.get("collage_path")
-    return render_template('final_poster.html', collage_path=collage_path)
+    concerts = session.get("concerts", [])
+    return render_template('final_poster.html', collage_path=collage_path, concerts=concerts)
 
 
 @app.route('/generate-collage')
@@ -204,6 +214,14 @@ def generate_collage():
         make_album_collage(image_paths, output_path, cols=3)
     else:
         make_album_collage(image_paths, output_path)
+
+    artists = []
+    for item in cart.values():
+        artist_name = item.get("artist")
+        if artist_name and artist_name not in artists:
+            artists.append(artist_name)
+
+    session["concerts"] = fetch_concerts_for_artists(artists)
     session["collage_path"] = "final_poster/collage.jpg"
     return redirect(url_for("final"))
 
@@ -259,6 +277,3 @@ def apply_effect():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-#test
