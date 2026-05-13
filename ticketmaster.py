@@ -1,3 +1,12 @@
+"""
+Cris Bravo, David Martinez, Gigi Powers, Nadine El-Kheshen, Wyatt Marvin
+CST205
+CST205 Final Project/Spotify Poster Generator
+05/13/2026
+Abstract: This Python file contains the functions for ticketmaster features.
+"""
+
+#made by David
 import os
 import requests
 
