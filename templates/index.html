@@ -3,79 +3,480 @@
 <head>
     <meta charset="UTF-8">
     <title>Final Project CST205</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <style>
-        .album-grid {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #ddb65a;
+            color: #14365b;
+            font-family: 'Bungee', sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden; 
+        }
+
+        .page {
+            position: relative;
+            z-index: 2;
+            padding: 40px 50px 60px;
+        }
+
+        .record {
+            position: absolute;
+            top: 600px;
+            left: 1300px;
+            width: 800px;
+
+            transform: translate(-50%, -50%);
+            animation: spin 10s linear infinite;
+            z-index: 3;
+        }
+
+        .top-buttons {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 28px;
+            margin-top: 10px;
+            margin-bottom: 50px;
+        }
+
+        .top-buttons a,
+        .cart-btn {
+            text-decoration: none;
+            color: #17385d;
+            background: #ece6d5;
+            border: 4px solid #c54033;
+            padding: 20px 24px;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .top-cart {
+            position: absolute;
+            right: 50px;
+            top: 0;
+        }
+
+        .cart-btn {
+            display: list-item;
+            list-style: revert;
+            margin: 0;
+            user-select: none;
+        }
+
+        .cart-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            margin-top: 10px;
+            background: #ece6d5;
+            border: 4px solid #c54033;
+            padding: 20px;
+            z-index: 50;
+        }
+
+        .cart-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .trash-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            color: #17385d;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .trash-btn .material-symbols-outlined {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .submit-btn {
+            background:#ece6d5;
+            color: #17385d;
+            border: 3px solid #17385d;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .top-cart[open] .cart-dropdown {
+            display: block;
+        }
+        
+        .divider {
+            height: 5px;
+            background: #c54033;
+            margin-bottom: 70px;
+        }
+
+        .hero-title {
+            font-size: 90px;
+            line-height: 0.95;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #17385d;
+            max-width: 900px;
+            margin-bottom: 30px;
+        }
+
+        .sub-text {
+            font-size: 26px;
+            margin-bottom: 30px;
+            color: #17385d;
+        }
+
+        .login-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            text-decoration: none;
+            color: #17385d;
+            background: #ece6d5;
+            border: 3px solid #c54033;
+            padding: 16px 22px;
+            font-weight: 700;
+        }
+
+        .search-form {
             display: flex;
             flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .search-form input[type="text"] {
+            width: 420px;
+            max-width: 100%;
+            padding: 18px 16px;
+            border: 3px solid #c54033;
+            background: #ece6d5;
+            font-size: 18px;
+            color: #17385d;
+            outline: none;
+        }
+
+        .search-form button,
+        .add-btn {
+            background: #ece6d5;
+            color: #17385d;
+            border: 4px solid #c54033;
+            padding: 16px 24px;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .add-btn {
+            border: 4px solid #17385d;
+            display: block;
+            margin-left: auto;
+            margin-top: 40px;
+            margin-bottom: 30px;
+        }
+
+        .submit-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .tracks {
+            background: #c54033; 
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+            padding: 10px 0;
+        } 
+
+        .tracks-inner{
+            padding: 0 60px;
+        }
+
+        .section-title {
+            font-size: 65px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #17385d;
+            margin: 50px 0 30px;
+        }
+
+        .helper-text {
+            font-size: 24px;
+            color: #17385d;
+            margin-bottom: 30px;
+        }
+
+        .album-grid {
+            display: grid;
+            grid-template-columns: 1fr; 
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .album-card {
+            width: 100%;
+            background: #ece6d5;
+            border: 8px solid #17385d;
+            border-radius: 18px;
+            padding: 30px;
+
+            display: flex;
+            flex-direction: column;   
+            align-items: center;      
+            text-align: center;
             gap: 20px;
         }
-        .album-card {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 10px;
-            width: 150px;
-            text-align: center;
-            background: #fafafa;
+
+        .album-card img {
+            width: 100%;
+            max-width: 260px;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .album-name {
+            font-size: 45px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #17385d;
+            margin-bottom: 2px;
+        }
+
+        .album-date {
+            font-size: 22px;
+            color: #17385d;
+            margin-bottom: 6px;
+        }
+
+        .album-card label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #17385d;
+        }
+
+        .album-card input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #c54033;
+        }
+
+        .empty-message {
+            font-size: 24px;
+            color: #17385d;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .hero-title {
+                font-size: 64px;
+            }
+
+            .section-title {
+                font-size: 50px;
+            }
+
+            .top-buttons {
+                flex-wrap: wrap;
+            }
+
+            .page {
+                padding: 30px 24px 50px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero-title {
+                font-size: 46px;
+            }
+
+            .section-title {
+                font-size: 38px;
+            }
+
+            .sub-text,
+            .helper-text {
+                font-size: 20px;
+            }
+
+            .search-form input[type="text"] {
+                width: 100%;
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Final Project CST205</h1>
-    <a href="/login">Login with Spotify to see your Top Tracks</a>
+    <div class="page">
+        <img src="{{ url_for('static', filename='images/record.png') }}" class="record" alt="record">
 
-    <form method="POST">
-        <input type="text" name="query" value="{{ query }}" placeholder="Search..." size="40" required>
-        <button type="submit">Search</button>
-    </form>
+        <div class="top-buttons">
+            <a href="/">Back to Search</a>
+            <a href="/logout">Logout</a>
 
-    <details>
-        <summary>Cart ({{ cart_items|length }})</summary>
-        {% if cart_items|length == 0 %}
-            <p>Empty cart.</p>
-        {% else %}
-            <form method="POST" action="/remove-from-cart">
-                <input type="hidden" name="query" value="{{ query }}">
-                {% for item in cart_items %}
-                    <p>
-                        <input type="checkbox" name="remove_album_ids" value="{{ item.id }}">
-                        {{ item.name }}
-                    </p>
-                {% endfor %}
-                <button type="submit">Remove Selected</button>
-            </form>
-        {% endif %}
-    </details>
+            <details class="cart top-cart">
+                <summary class="cart-btn">
+                    Cart ({{ cart_items|length }})
+                </summary>
 
-    {% if albums is defined %}
-        {% if albums|length > 0 %}
-            <h2>Select 1 to 8 album covers for {{ artist_name }}</h2>
-            <form method="POST" action="/add-to-cart" id="albumForm">
-                <input type="hidden" name="query" value="{{ query }}">
-                <div class="album-grid">
-                    {% for album in albums %}
-                        <div class="album-card">
-                            {% if album['images'] %}
-                                <img src="{{ album['images'][0]['url'] }}" alt="{{ album['name'] }}" style="width:120px;">
-                            {% endif %}
-                            <p>{{ album['name'] }}</p>
-                            <p>{{ album['release_date'] }}</p>
-                            {% set img_url = album['images'][0]['url'] if album['images'] else '' %}
-                            <label>
-                                <input type="checkbox" name="selected_albums" value="{{ album['id'] }}|{{ album['name'] }}|{{ img_url }}" {% if album['id'] in cart_ids %}checked{% endif %}>
-                                Select
-                            </label>
+                <div class="cart-dropdown">
+                    {% if cart_items|length == 0 %}
+                        <p>Empty cart.</p>
+                    {% else %}
+                        {% for item in cart_items %}
+                            <div class="cart-item">
+                                <span>{{ item['name'] }}</span>
+
+                                <form method="POST" action="/remove-from-cart" class="remove-one-form">
+                                    <input type="hidden" name="query" value="{{ query }}">
+                                    <input type="hidden" name="remove_album_ids" value="{{ item['id'] }}">
+
+                                    <button type="submit" class="trash-btn" aria-label="Remove {{ item['name'] }}">
+                                        🗑
+                                    </button>
+                                </form>
+                            </div>
+                        {% endfor %}
+
+                        <div class="cart-actions">
+                            <form method="POST" action="/select-albums" class="cart-form">
+                                <input type="hidden" name="query" value="{{ query }}">
+                                <button type="submit" class="submit-btn">
+                                    Submit Albums
+                                </button>
+                            </form>
                         </div>
-                    {% endfor %}
+                    {% endif %}
                 </div>
-                <br>
-                <button type="submit">Add To Cart</button>
-            </form>
-            <form method="POST" action="/select-albums">
-                <button type="submit">Submit Selected Albums</button>
-            </form>
-        {% else %}
-            <p>Search for albums to add to your cart.</p>
+            </details>
+        </div>
+
+        <div class="divider"></div>
+
+        <h1 class="hero-title">CST205 Final Project</h1>
+
+        <p class="sub-text">Search for an artist and choose up to 8 album covers.</p>
+
+        <a class="login-link" href="/login">Login with Spotify to see your Top Tracks</a>
+
+        <form method="POST" class="search-form">
+            <input
+                type="text"
+                name="query"
+                value="{{ query }}"
+                placeholder="Search artist..."
+                required
+            >
+            <button type="submit">Search</button>
+        </form>
+
+        {% if albums is defined %}
+            {% if albums|length > 0 %}
+                <div class="tracks">
+                    <div class="tracks-inner">
+                        <h2 class="section-title">Tracks</h2>
+                        <p class="helper-text">Select 1 to 8 album covers for {{ artist_name }}</p>
+
+                        <form method="POST" action="/add-to-cart" id="albumForm">
+                            <input type="hidden" name="query" value="{{ query }}">
+                        
+                            <div class="album-grid">
+                                {% for album in albums %}
+                                    <div class="album-card">
+                                        {% if album['images'] %}
+                                            <img src="{{ album['images'][0]['url'] }}" alt="{{ album['name'] }}">
+                                        {% endif %}
+
+                                        <div class="album-name">{{ album['name'] }}</div>
+                                        <div class="album-date">{{ album['release_date'] }}</div>
+
+                                        {% set img_url = album['images'][0]['url'] if album['images'] else '' %}
+                                        <label>
+                                            <input type="checkbox" name="selected_albums" value="{{ album['id'] }}|{{ album['name']|replace('|','_') }}|{{ img_url }}" {% if album['id'] in cart_ids %}checked disabled{% endif %}>
+                                            {% if album['id'] in cart_ids %}
+                                                In Cart
+                                            {% else %}
+                                                Select
+                                            {% endif %}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="submit-container">
+                                <button type="submit" class="add-btn">Add To Cart</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <script>
+                    const form = document.getElementById("albumForm");
+                    form.addEventListener("submit", function(event) {
+                        const checked = document.querySelectorAll('input[name="selected_albums"]:checked');
+                        if (checked.length < 1) {
+                            alert("Please select at least 1 album cover.");
+                            event.preventDefault();
+                        } else if (checked.length > 8) {
+                            alert("You can select up to 8 album covers only.");
+                            event.preventDefault();
+                        }
+                    });
+                </script>
+            {% else %}
+                <p class="empty-message">No albums found for this artist.</p>
+            {% endif %}
         {% endif %}
-    {% endif %}
+    </div>
 </body>
 </html>

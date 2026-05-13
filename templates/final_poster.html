@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Project CST205</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/final_poster.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="main">
+
+    <div>
+        <ul class="navbar">
+            <li><a href="/">Back to Search</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="header_border">
+        <h1>Your Final Poster</h1>
+    </div>
+
+
+    <div class="container m-4 poster">
+        {% if collage_path %}
+            <img src="{{ url_for('static', filename=collage_path) }}" class="poster_img" />
+        {% else %}
+            <p>No poster generated yet. <a href="/selected-albums">Go select albums.</a></p>
+        {% endif %}
+    </div>
+
+    <div class="container m-4 download">
+        {% if collage_path %}
+        <div class="blue_div">
+        <a href="{{ url_for('static', filename=collage_path) }}" download="Final_Poster.jpg" class="download_btn">
+        Download Final Poster
+        </a>
+        </div>
+        {% endif %}
+    </div>
+
+<div class="container m-4 concerts-section">
+    <h2 class="concert-title">Upcoming Concerts</h2>
+
+    {% if concerts %}
+    <div class="concert-grid">
+        {% for concert in concerts %}
+        <div class="concert-card">
+            <h3 class="concert-name">
+                {{ concert.name }}
+            </h3>
+
+            <p class="concert-text"><strong>Artist:</strong> {{ concert.artist }}</p>
+            <p class="concert-text"><strong>Date:</strong> {{ concert.date }}</p>
+            <p class="concert-text"><strong>Venue:</strong> {{ concert.venue }}</p>
+            <p class="concert-text"><strong>City:</strong> {{ concert.city }}</p>
+
+            <a href="{{ concert.url }}" target="_blank" class="concert-btn">
+                Get Tickets
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="concert-empty">
+        No upcoming concerts found for the artists in your cart.
+    </p>
+    {% endif %}
+</div>
+
+    
+</div>
+
+   
+</body>
+</html>
