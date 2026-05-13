@@ -15,6 +15,7 @@ SPOTIFY_CLIENT_ID= fill in with your Spotify clied id
 SPOTIFY_CLIENT_SECRET= fill in with spotify secret
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:5000/callback
 FLASK_SECRET_KEY=Anasjc83jn40
+TICKETMASTER_API_KEY= fill in with TicketMaster Consumer Key
 
 Run the flask app with 
 python main.py
