@@ -1,8 +1,17 @@
+"""
+Cris Bravo, David Martinez, Gigi Powers, Nadine El-Kheshen, Wyatt Marvin
+CST205
+CST205 Final Project/Spotify Poster Generator
+05/13/2026
+Abstract: This Python file contains the effects functions for the grauscale, sepia, negative filtes and the generate collage features.
+These were all based from the assigned HW and Labs.
+"""
 import math
 import os
 from PIL import Image
 
 # Functions from hw3 functions.py
+#these functions were made by Cris
 
 def apply_grayscale(full_path):
     im = Image.open(full_path).convert("RGB")

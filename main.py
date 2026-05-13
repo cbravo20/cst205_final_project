@@ -1,3 +1,21 @@
+"""
+Cris Bravo, David Martinez, Gigi Powers, Nadine El-Kheshen, Wyatt Marvin
+CST205
+CST205 Final Project/Spotify Poster Generator
+05/13/2026
+Abstract: This Python Flask web app uses the Spotify API to retreive album covers
+to generate posters for the user. The user can also sign in to their account and retrieve their
+top 10 tracks to use those album covers as well. Users can apply the effects from previous labs/hw
+such as sepia, negative and greyscale. 
+
+Spotipy Documentation was used to code the spotipy functions such as get_oauth()
+https://spotipy.readthedocs.io/en/2.22.1/
+
+Github: https://github.com/cbravo20/cst205_final_project 
+"""
+
+#initial app was made by Cris
+#Wyatt, Gigi, Nadine primarily worked on the HTML pages and stylizing them
 import os
 from flask import Flask, render_template, request, redirect, session, url_for, flash
 from dotenv import load_dotenv
@@ -10,17 +28,21 @@ from spotipy.cache_handler import FlaskSessionCacheHandler
 from effects import EFFECTS, make_album_collage, original_img_path
 from ticketmaster import fetch_concerts_for_artists
 
+#loads env variables from .env file(ex. Spotify api key)
 load_dotenv()
 
+#creates the flask app and sets the secret key for session cookies
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
 
+#public spotify client used for album searches (no user login required)
 sp_search = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
     client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
     client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET")
 ))
 
 
+#taken from spotipy documentation, returns a SpotifyOAuth object for user login with the user-top-read
 def get_oauth():
     return SpotifyOAuth(
         client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
@@ -31,7 +53,7 @@ def get_oauth():
     )
 
 
-
+#main search page, searches spotify for albums matching the user's query
 @app.route("/", methods=["GET", "POST"])
 def index():
     query = request.args.get("query", "").strip()
@@ -49,6 +71,7 @@ def index():
 
     if query:
         try:
+            #searches spotify for albums and returns up to 10 results
             results = sp_search.search(q=query, type="album", limit=10)
             if results and 'albums' in results and 'items' in results['albums']:
                 albums = results['albums']['items']
@@ -68,11 +91,13 @@ def index():
     )
 
 
+#redirects the user to spotify's login page
 @app.route("/login")
 def login():
     return redirect(get_oauth().get_authorize_url() + "&show_dialog=true")
 
 
+#spotify redirects here after login, exchanges the auth code for an access token
 @app.route("/callback")
 def callback():
     code = request.args.get("code")
@@ -85,7 +110,8 @@ def logout():
     session.clear()
     return redirect(url_for("index"))
 
-
+#made by Cris
+#fetches the logged-in user's top 10 tracks from the last 4 weeks
 @app.route("/top-tracks")
 def top_tracks():
     oauth = get_oauth()
@@ -103,7 +129,7 @@ def top_tracks():
     return render_template("top_tracks.html", tracks=tracks["items"],
                            cart_items=cart_items, cart_ids=cart_ids)
 
-
+#worked on by David
 @app.route("/select-albums", methods=["POST"])
 def select_albums():
     # Check cart, then go to selected albums page.
@@ -114,7 +140,7 @@ def select_albums():
 
     return redirect(url_for("selected_albums"))
 
-
+#worked on by David and Cris
 @app.route("/add-to-cart", methods=["POST"])
 def add_to_cart():
     # This route was added so checked albums can be saved in the cart.
@@ -180,14 +206,14 @@ def add_to_cart():
     query = request.form.get("query", "").strip()
     return redirect(url_for("index", query=query))
 
-
+#worked on by Wyatt
 @app.route('/final-poster')
 def final():
     collage_path = session.get("collage_path")
     concerts = session.get("concerts", [])
     return render_template('final_poster.html', collage_path=collage_path, concerts=concerts)
 
-
+#by Cris and David
 @app.route('/generate-collage')
 def generate_collage():
     # grab all image paths from the cart, skipping any that didn't save properly
@@ -226,7 +252,7 @@ def generate_collage():
     session["collage_path"] = "final_poster/collage.jpg"
     return redirect(url_for("final"))
 
-
+#worked on by David
 @app.route("/remove-from-cart", methods=["POST"])
 def remove_from_cart():
     # This route was added so albums can be removed from the cart.
@@ -252,6 +278,7 @@ def remove_from_cart():
 def selected_albums():
     return render_template("selected_albums.html", album_data=list(session.get("album_cart", {}).values()))
 
+#worked on by Cris
 @app.route("/apply-effect", methods=["POST"])
 def apply_effect():
     img_path = request.form.get("img_path")
