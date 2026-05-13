@@ -1,9 +1,11 @@
+/* calling a font family for styling */
 .bungee-regular {
   font-family: "Bungee", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
+/* calling a font family for styling */
 .dm-sans-font {
   font-family: "DM Sans", sans-serif;
   font-optical-sizing: auto;
@@ -11,12 +13,15 @@
   font-style: normal;
 }
 
+/* Create backgrounnd color and set overflow-x to hidden */
+/* hidden overflow-x keeps you from scrolling horizontally off the page where the record appears. */
 body {
   background-color: #f7f1db;
   margin: 0px;
   overflow-x: hidden; 
 }
 
+/* Basic layout justification */
 .main {
   justify-content: center;
   align-items: center;
@@ -24,6 +29,7 @@ body {
   background-color: #fcbf49;
 }
 
+/* Nav bar styling */
 .navbar {
   list-style-type: none;
   margin: 0;
@@ -40,6 +46,7 @@ body {
   float: left;
 }
 
+/* Nav bar list element styling */
 .navbar li a {
   font-family: "Bungee", sans-serif;
   background-color: #f7f1db;
@@ -55,19 +62,20 @@ body {
   text-decoration: none;
 }
 
+/* What changes when the user hovers over a list item */
 .navbar li a:hover {
   background-color: #d52a28;
   color: #f7f1db;
   border-color: #fcbf49;
 }
 
-
+/* border box */
 .header_border {
   display: flex;
   align-items: center;  
 }
 
-
+/* Header level one */
 h1 {
   color: #003049;
   font-family: "Bungee", sans-serif;
@@ -79,6 +87,8 @@ h1 {
   padding: 30px;
 }
 
+/* Record img positioning */
+/* Add transform element to keyframe */
 .record {
   position: absolute;
   top: 80%;
@@ -89,6 +99,7 @@ h1 {
 
 }
 
+/* Added keyframes to animate translation from 0-360 degrees */
 @keyframes spin {
   from {
     transform: translate(-50%, -50%) rotate(0deg);
@@ -98,6 +109,7 @@ h1 {
   }
 }
 
+/* Adding animation for it to spin 360 degrees in 10 seconds infinitely */
 .record {
   animation: spin 10s linear infinite;
 }
@@ -106,6 +118,7 @@ ol {
   list-style-type: none;
 }
 
+/* Album layout and styling */
 .album {
   font-family: "Bungee", sans-serif;
   color: #003049;
@@ -124,6 +137,7 @@ ol {
   border-color: #003049;
 }
 
+/* Seperate styling for the inner img */
 .album img {
   margin-bottom: 12px;
   width: 300px;
@@ -131,17 +145,20 @@ ol {
   border-radius: 10px;
 }
 
+/* Title styling */
 .title {
   font-size: 3rem;
   margin-bottom: 20px;
   margin-top: 20px;
 }
 
+/* Text styling */
 .text {
   font-family: "DM Sans", sans-serif;
   font-size: 20px;
 }
 
+/* Cart styling */
 .cart-section {
   background-color: #fcbf49;
   padding: 20px 40px;

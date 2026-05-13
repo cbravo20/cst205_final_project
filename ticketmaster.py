@@ -3,8 +3,11 @@ Cris Bravo, David Martinez, Gigi Powers, Nadine El-Kheshen, Wyatt Marvin
 CST205
 CST205 Final Project/Spotify Poster Generator
 05/13/2026
-Abstract: This Python file contains the functions for ticketmaster features.
-https://developer.ticketmaster.com/products-and-docs/apis/getting-started/ 
+Abstract: This Python file contains the functions for ticketmaster features. IT grabs the Spotify 
+artist name and uses it to search for concerts on Ticketmaster, then returns a list of concerts with
+relevant information.
+
+Documentation: https://developer.ticketmaster.com/products-and-docs/apis/getting-started/ 
 """
 
 #made by David
