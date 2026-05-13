@@ -4,6 +4,7 @@ CST205
 CST205 Final Project/Spotify Poster Generator
 05/13/2026
 Abstract: This Python file contains the functions for ticketmaster features.
+https://developer.ticketmaster.com/products-and-docs/apis/getting-started/ 
 """
 
 #made by David
