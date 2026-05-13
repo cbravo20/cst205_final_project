@@ -9,6 +9,7 @@ How to Run:
 With python environment active run 
 pip install python-dotenv
 pip install spotipy
+pip install pillow
 
 Create .env file in the root directory with the following lines
 SPOTIFY_CLIENT_ID= fill in with your Spotify clied id
