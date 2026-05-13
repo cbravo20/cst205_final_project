@@ -12,7 +12,7 @@
             margin: 0;
             padding: 0;
         }
-
+/* css for homepage, stylization of overall page*/
         body {
             background: #ddb65a;
             color: #14365b;
@@ -27,7 +27,7 @@
             z-index: 2;
             padding: 40px 50px 60px;
         }
-
+/* spinning record*/
         .record {
             position: absolute;
             top: 600px;
@@ -38,7 +38,7 @@
             animation: spin 10s linear infinite;
             z-index: 3;
         }
-
+/*back to search and logout buttons at the top of the page*/
         .top-buttons {
             position: relative;
             display: flex;
@@ -66,7 +66,7 @@
             justify-content: center;
             gap: 10px;
         }
-
+/*cart button and dropdown at the top of page*/
         .top-cart {
             position: absolute;
             right: 50px;
@@ -108,7 +108,7 @@
             gap: 12px;
             margin-bottom: 16px;
         }
-
+/*trash bins by each album in cart*/
         .trash-btn {
             background: none;
             border: none;
@@ -126,7 +126,7 @@
             font-size: 24px;
             line-height: 1;
         }
-
+/* submit albums in cart*/
         .submit-btn {
             background:#ece6d5;
             color: #17385d;
@@ -140,13 +140,13 @@
         .top-cart[open] .cart-dropdown {
             display: block;
         }
-        
+
         .divider {
             height: 5px;
             background: #c54033;
             margin-bottom: 70px;
         }
-
+/* title stylization*/
         .hero-title {
             font-size: 90px;
             line-height: 0.95;
@@ -162,7 +162,7 @@
             margin-bottom: 30px;
             color: #17385d;
         }
-
+/*stylization of login and search features*/
         .login-link {
             display: inline-block;
             margin-bottom: 30px;
@@ -218,7 +218,7 @@
             justify-content: flex-end;
             text-align: right;
         }
-
+/*tracks background and album card design*/
         .tracks {
             background: #c54033; 
             width: 100vw;
@@ -357,7 +357,7 @@
     </style>
 </head>
 <body>
-    <div class="page">
+    <div class="page">/*record image placed on page*/
         <img src="{{ url_for('static', filename='images/record.png') }}" class="record" alt="record">
 
         <div class="top-buttons">
@@ -368,7 +368,7 @@
                 <summary class="cart-btn">
                     Cart ({{ cart_items|length }})
                 </summary>
-
+                /*cart dropdown, shows album names, places trash with each name, has submit button at bottom of cart*/
                 <div class="cart-dropdown">
                     {% if cart_items|length == 0 %}
                         <p>Empty cart.</p>
@@ -419,7 +419,7 @@
             >
             <button type="submit">Search</button>
         </form>
-
+        /*set up for tracks section*/
         {% if albums is defined %}
             {% if albums|length > 0 %}
                 <div class="tracks">
