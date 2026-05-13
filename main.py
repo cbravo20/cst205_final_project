@@ -12,6 +12,7 @@ Spotipy Documentation was used to code the spotipy functions such as get_oauth()
 https://spotipy.readthedocs.io/en/2.22.1/
 
 Github: https://github.com/cbravo20/cst205_final_project 
+Trello: https://trello.com/invite/b/69e6a245782a29d61c5b40fb/ATTIa5cdad7183d8c44247a3b8fba2ed83a666994ACE/cst205-final-project 
 """
 
 #initial app was made by Cris
