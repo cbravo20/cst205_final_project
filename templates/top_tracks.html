@@ -34,6 +34,31 @@
         
         <!-- <a href="/">Back to Search</a> | <a href="/logout">Logout</a> -->
 
+        <div class="cart-section">
+            <details>
+                <summary class="cart-summary">Cart ({{ cart_items|length }})</summary>
+                {% if cart_items|length == 0 %}
+                    <p class="cart-empty">Empty cart.</p>
+                {% else %}
+                    <form method="POST" action="/remove-from-cart">
+                        <input type="hidden" name="redirect_to" value="top_tracks">
+                        {% for item in cart_items %}
+                            <p class="cart-item">
+                                <input type="checkbox" name="remove_album_ids" value="{{ item.id }}">
+                                {{ item.name }}
+                            </p>
+                        {% endfor %}
+                        <button class="cart-btn" type="submit">Remove Selected</button>
+                    </form>
+                {% endif %}
+            </details>
+            <form method="POST" action="/select-albums">
+                <button class="cart-btn submit-btn" type="submit">Submit Selected Albums</button>
+            </form>
+        </div>
+
+        <form method="POST" action="/add-to-cart">
+            <input type="hidden" name="redirect_to" value="top_tracks">
         <div class="top">
             <ol>
             {% for track in tracks %}
@@ -45,10 +70,20 @@
                     <strong class="title">{{ track['name'] }}</strong>
                     <span class="text">Artist: {{ track['artists'] | map(attribute='name') | join(', ') }}</span>
                     <span class="text">Album: {{ track['album']['name'] }}</span>
+
+                    {% set img_url = track['album']['images'][0]['url'] if track['album']['images'] else '' %}
+                    <label class="cart-label">
+                        <input type="checkbox" name="selected_albums"
+                               value="{{ track['album']['id'] }}|{{ track['album']['name'] }}|{{ img_url }}"
+                               {% if track['album']['id'] in cart_ids %}checked{% endif %}>
+                        Add Album to Cart
+                    </label>
                 </li>
             {% endfor %}
             </ol>
         </div>
+            <button class="add-cart-btn" type="submit">Add Selected to Cart</button>
+        </form>
 
    
 </body>
