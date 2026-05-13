@@ -405,7 +405,7 @@
 
         <h1 class="hero-title">CST205 Final Project</h1>
 
-        <p class="sub-text">Search for an artist and choose up to 8 album covers.</p>
+        <p class="sub-text">Search for an artist and choose up to 10 album covers.</p>
 
         <a class="login-link" href="/login">Login with Spotify to see your Top Tracks</a>
 
@@ -425,7 +425,7 @@
                 <div class="tracks">
                     <div class="tracks-inner">
                         <h2 class="section-title">Tracks</h2>
-                        <p class="helper-text">Select 1 to 8 album covers for {{ artist_name }}</p>
+                        <p class="helper-text">Select 1 to 10 album covers for {{ artist_name }}</p>
 
                         <form method="POST" action="/add-to-cart" id="albumForm">
                             <input type="hidden" name="query" value="{{ query }}">
@@ -467,8 +467,8 @@
                         if (checked.length < 1) {
                             alert("Please select at least 1 album cover.");
                             event.preventDefault();
-                        } else if (checked.length > 8) {
-                            alert("You can select up to 8 album covers only.");
+                        } else if (checked.length > 10) {
+                            alert("You can select up to 10 album covers only.");
                             event.preventDefault();
                         }
                     });
