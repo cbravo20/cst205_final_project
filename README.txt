@@ -11,8 +11,8 @@ pip install python-dotenv
 pip install spotipy
 
 Create .env file in the root directory with the following lines
-SPOTIFY_CLIENT_ID=bd59ed6b6ee44d0ea0368c7e2e03aac7
-SPOTIFY_CLIENT_SECRET=3c804c48b71d4139b60ce482c7f709d8
+SPOTIFY_CLIENT_ID= fill in with your Spotify clied id
+SPOTIFY_CLIENT_SECRET= fill in with spotify secret
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:5000/callback
 FLASK_SECRET_KEY=Anasjc83jn40
 
