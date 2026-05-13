@@ -10,6 +10,8 @@ such as sepia, negative and greyscale.
 
 Spotipy Documentation was used to code the spotipy functions such as get_oauth()
 https://spotipy.readthedocs.io/en/2.22.1/
+
+Github: https://github.com/cbravo20/cst205_final_project 
 """
 
 #initial app was made by Cris
