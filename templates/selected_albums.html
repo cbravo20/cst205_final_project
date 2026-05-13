@@ -1,11 +1,62 @@
-{% for album in album_data %}
-    <p>{{ album.name }}</p>
-    {% if album.img_path %}
-        <img src="{{ url_for('static', filename=album.img_path) }}" width="200">
-    {% else %}
-        <p>Image not available.</p>
-    {% endif %}
-    <br>
-{% endfor %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Selected Albums</title>
 
-<p><a href="{{ url_for('index') }}">Back to Search</a></p>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/selected_albums.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <h1 class="page-title">Your Selected Albums</h1>
+
+    <a href="/" class="nav-btn">← Back to Search</a>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <p class="flash-message">{{ msg }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="albums-container">
+        {% for album in album_data %}
+            <div class="album-card">
+
+                <h3 class="album-title">{{ album.name }}</h3>
+
+                {% if album.img_path %}
+                    <img src="{{ url_for('static', filename=album.img_path) }}" class="album-img">
+
+                    <div class="effect-buttons">
+                        {% for effect in ['grayscale', 'sepia', 'negative'] %}
+                            <form method="POST" action="/apply-effect" class="effect-form">
+                                <input type="hidden" name="img_path" value="{{ album.img_path }}">
+                                <input type="hidden" name="effect" value="{{ effect }}">
+                                <input type="hidden" name="album_id" value="{{ album.id }}">
+                                <button type="submit" class="effect-btn">{{ effect }}</button>
+                            </form>
+                        {% endfor %}
+                    </div>
+
+                {% else %}
+                    <p class="no-image">Image not available.</p>
+                {% endif %}
+
+            </div>
+        {% endfor %}
+    </div>
+
+    <form action="/generate-collage" method="get" class="generate-form">
+        <button type="submit" class="generate-btn">Generate Poster</button>
+    </form>
+
+</body>
+</html>
