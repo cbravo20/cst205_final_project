@@ -1,0 +1,140 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #f7f1db;
+  color: #003049;
+  font-family: "DM Sans", sans-serif;
+}
+/* Title */
+.page-title {
+  font-family: "Bungee", sans-serif;
+  font-size: 70px;
+  text-align: center;
+  background: #fcbf49;
+  padding: 50px 30px 30px;
+  border-bottom: 5px solid #d52a28;
+}
+
+/* Back button */
+.nav-btn {
+  display: block;
+  width: fit-content;
+  margin: 25px auto;
+  padding: 12px 18px;
+  background: #f7f1db;
+  color: #003049;
+  border: 2px solid #d52a28;
+  border-width: 2px 5px 5px 2px;
+  text-decoration: none;
+  font-family: "Bungee", sans-serif;
+}
+
+.nav-btn:hover {
+  background: #d52a28;
+  color: #f7f1db;
+  border-color: #fcbf49;
+}
+
+/* Flash message */
+.flash-message {
+  background: #f7f1db;
+  color: #d52a28;
+  border: 3px solid #d52a28;
+  padding: 12px;
+  margin: 20px auto;
+  max-width: 600px;
+  text-align: center;
+}
+
+/* Albums section */
+.albums-container {
+  background: #d52a28;
+  padding: 40px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 30px;
+}
+
+/* Card */
+.album-card {
+  background: #f7f1db;
+  border: 10px solid #003049;
+  border-radius: 10px;
+  padding: 20px;
+
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Title */
+.album-title {
+  font-family: "Bungee", sans-serif;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+/* Image */
+.album-img {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+/* Effect buttons */
+.effect-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.effect-btn {
+  font-family: "Bungee", sans-serif;
+  background: #f7f1db;
+  color: #003049;
+  border: 2px solid #d52a28;
+  border-width: 2px 5px 5px 2px;
+  padding: 6px 10px;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.effect-btn:hover {
+  background: #d52a28;
+  color: #f7f1db;
+  border-color: #fcbf49;
+}
+
+/* Generate section */
+.generate-form {
+  background: #fcbf49;
+  text-align: center;
+  padding: 35px;
+}
+
+.generate-btn {
+  font-family: "Bungee", sans-serif;
+  background: #003049;
+  color: #f7f1db;
+  border: 2px solid #f7f1db;
+  padding: 14px 20px;
+  cursor: pointer;
+}
+
+.generate-btn:hover {
+  background: #d52a28;
+  border-color: #fcbf49;
+}
+
+/* No image text */
+.no-image {
+  font-size: 14px;
+}
